@@ -70,7 +70,7 @@ public class IUserServiceImpl implements IUserService {
     }
 
     /**
-     * 校验是否成功
+     * 校验是否有这用户
      * @param str
      * @param type
      * @return
@@ -131,5 +131,117 @@ public class IUserServiceImpl implements IUserService {
             return ServiceResponse.createdBySuccess(forgetToken);
         }
         return ServiceResponse.createdByErrorMessage("回答的问题是错误的");
+    }
+
+    /**
+     *未登录忘记密码重置密码
+     * @param username
+     * @param passwordNew
+     * @param forgetToken
+     * @return
+     */
+    @Override
+    public ServiceResponse<String> forgetRestPassword(String username, String passwordNew, String forgetToken) {
+        if (StringUtils.isNotBlank(forgetToken)) {
+            return ServiceResponse.createdByErrorMessage("参数错误，需要传递token值");
+        }
+
+        ServiceResponse validResponse = this.checkVaild(username, Const.USERNAME);
+        if (validResponse.isSuccess()) {
+            return ServiceResponse.createdByErrorMessage("用户不存在");
+        }
+
+        String token = TokenCache.getKey(TokenCache.TOKEN_PREFIX + username);
+        if (StringUtils.isNotBlank(token)) {
+            return ServiceResponse.createdByErrorMessage("token无效或者过期");
+        }
+
+        if (StringUtils.equals(forgetToken, token)) {
+            String md5Password = MD5Util.MD5EncodeUtf8(passwordNew);
+            int resultCount = userMapper.updatePasswordByUsername(username, md5Password);
+            if (resultCount > 0) {
+                return ServiceResponse.createdBySuccess("修改密码成功");
+            }
+        } else {
+            return ServiceResponse.createdByErrorMessage("token失效，请重新获取token值");
+        }
+        return ServiceResponse.createdByErrorMessage("修改密码失败");
+    }
+
+    /**
+     * 登陆后的重置密码
+     * @param passwordOld
+     * @param passwordNew
+     * @param user
+     * @return
+     */
+    @Override
+    public ServiceResponse<String> resetPassword(String passwordOld, String passwordNew, User user) {
+        int resultCount = userMapper.checkPassword(MD5Util.MD5EncodeUtf8(passwordOld), user.getId());
+        if (resultCount == 0) {
+            return ServiceResponse.createdByErrorMessage("旧密码错误");
+        }
+
+        user.setPassword(MD5Util.MD5EncodeUtf8(passwordNew));
+        int updateCount = userMapper.updateByPrimaryKeySelective(user);
+        if (updateCount > 0) {
+            return ServiceResponse.createdBySuccess("密码修改成功");
+        }
+        return ServiceResponse.createdByErrorMessage("密码修改失败");
+    }
+
+    /**
+     * 更新用户信息
+     * @param user
+     * @return
+     */
+    @Override
+    public ServiceResponse<User> updataInfomation(User user) {
+        String email = user.getEmail();
+        int userId = user.getId();
+        int resultCount = userMapper.checkEmailByUserId(email, userId);
+        if (resultCount > 0) {
+            return ServiceResponse.createdByErrorMessage("email已存在，请更换email在更新");
+        }
+
+        User updataUser = new User();
+        updataUser.setEmail(user.getEmail());
+        updataUser.setPhone(user.getPhone());
+        updataUser.setId(user.getId());
+        updataUser.setQuestion(user.getQuestion());
+        updataUser.setAnswer(user.getAnswer());
+        resultCount = userMapper.updateByPrimaryKeySelective(updataUser);
+        if (resultCount > 0) {
+            return ServiceResponse.createdBySuccess("个人信息更新成功", updataUser);
+        }
+        return ServiceResponse.createdByErrorMessage("个人信息更新失败");
+    }
+
+    /**
+     * 查找用户信息
+     * @param userId
+     * @return
+     */
+    @Override
+    public ServiceResponse<User> getInformation(int userId) {
+        User user = userMapper.selectByPrimaryKey(userId);
+        if (user == null) {
+            return ServiceResponse.createdByErrorMessage("找不到当前用户");
+        }
+        user.setPassword(StringUtils.EMPTY);
+        return ServiceResponse.createdBySuccess(user);
+    }
+
+    /**
+     * 校验是否是管理员
+     * @param user
+     * @return
+     */
+    @Override
+    public ServiceResponse checkAdminRole(User user) {
+        if (user != null && user.getRole().intValue() == Const.Role.ROLE_ADMIN) {
+            return ServiceResponse.createdBySuccess();
+        }
+        return  ServiceResponse.createdByError();
     }
 }
