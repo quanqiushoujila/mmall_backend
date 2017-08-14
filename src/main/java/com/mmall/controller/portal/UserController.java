@@ -144,7 +144,7 @@ public class UserController {
      * @param user
      * @return
      */
-    @RequestMapping(value="reset_password.do", method=RequestMethod.POST)
+    @RequestMapping(value="updata_infomation.do", method=RequestMethod.POST)
     @ResponseBody
     public ServiceResponse<User> updataInfomation(HttpSession session, User user) {
         User currentUser = (User) session.getAttribute(Const.CURRENT_USER);
