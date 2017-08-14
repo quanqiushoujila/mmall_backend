@@ -28,16 +28,18 @@ public class IUserServiceImpl implements IUserService {
     @Override
     public ServiceResponse<User> login(String username, String password) {
         int resultCount = userMapper.checkUsername(username);
+        System.out.println("resultCount:" + resultCount);
         if (resultCount == 0) {
             return ServiceResponse.createdByErrorMessage("用户名不存在");
         }
 
-        String MD5Password = MD5Util.MD5EncodeUtf8(password);
-        User user = userMapper.selectLogin(username, MD5Password);
+        String md5Password = MD5Util.MD5EncodeUtf8(password);
+        User user = userMapper.selectLogin(username, md5Password);
         if (user == null) {
             return ServiceResponse.createdByErrorMessage("密码错误");
         }
         user.setPassword(StringUtils.EMPTY);
+        System.out.println("user" + user);
         return ServiceResponse.createdBySuccess("登录成功", user);
     }
 
