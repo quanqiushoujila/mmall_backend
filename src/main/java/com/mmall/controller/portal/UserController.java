@@ -146,14 +146,14 @@ public class UserController {
      * @param user
      * @return
      */
-    @RequestMapping(value="updata_infomation.do", method=RequestMethod.POST)
+    @RequestMapping(value="update_information.do", method=RequestMethod.POST)
     @ResponseBody
-    public ServiceResponse<User> updataInfomation(HttpSession session, User user) {
+    public ServiceResponse<User> updateInfomation(User user, HttpSession session) {
         User currentUser = (User) session.getAttribute(Const.CURRENT_USER);
         if (currentUser == null) {
             return ServiceResponse.createdByErrorMessage("用户未登录");
         }
-        user.setId(user.getId());
+        user.setId(currentUser.getId());
         user.setEmail(user.getEmail());
         ServiceResponse response = iUserService.updataInfomation(user);
         if (response.isSuccess()) {

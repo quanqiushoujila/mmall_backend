@@ -203,6 +203,7 @@ public class IUserServiceImpl implements IUserService {
     public ServiceResponse<User> updataInfomation(User user) {
         String email = user.getEmail();
         int userId = user.getId();
+        System.out.println("userId" + userId);
         int resultCount = userMapper.checkEmailByUserId(email, userId);
         if (resultCount > 0) {
             return ServiceResponse.createdByErrorMessage("email已存在，请更换email在更新");
