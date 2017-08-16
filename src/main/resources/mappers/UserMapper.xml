@@ -198,7 +198,7 @@
   </update>
 
   <select id="checkPassword" parameterType="map" resultType="int">
-    SELECT  COUNT (1)
+    SELECT  COUNT(1)
     FROM  mmall_user
     WHERE id = #{userId} AND password = #{password}
   </select>
