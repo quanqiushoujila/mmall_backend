@@ -29,7 +29,6 @@ public class UserController {
     @RequestMapping(value="login.do", method=RequestMethod.POST)
     @ResponseBody
     public ServiceResponse<User> login(String username, String password, HttpSession session) {
-        System.out.println("登录" + username + "," + password);
         ServiceResponse<User> response = iUserService.login(username, password);
         if (response.isSuccess()) {
             session.setAttribute(Const.CURRENT_USER, response.getData());

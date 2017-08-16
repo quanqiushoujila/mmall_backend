@@ -51,12 +51,12 @@ public class IUserServiceImpl implements IUserService {
     @Override
     public ServiceResponse<String> register(User user) {
         ServiceResponse validResponse = this.checkVaild(user.getUsername(), Const.USERNAME);
-        if (validResponse.isSuccess()) {
+        if (!validResponse.isSuccess()) {
             return validResponse;
         }
 
         validResponse = this.checkVaild(user.getEmail(), Const.EMAIL);
-        if (validResponse.isSuccess()) {
+        if (!validResponse.isSuccess()) {
             return validResponse;
         }
 
@@ -68,7 +68,8 @@ public class IUserServiceImpl implements IUserService {
         if (resultCount == 0) {
             return ServiceResponse.createdByErrorMessage("注册失败");
         }
-        return ServiceResponse.createdBySuccess("注册成功");
+        System.out.println("1112222");
+        return ServiceResponse.createdBySuccessMessage("注册成功");
     }
 
     /**
@@ -83,6 +84,7 @@ public class IUserServiceImpl implements IUserService {
             if (Const.USERNAME.equals(type)) {
                 int resultCount = userMapper.checkUsername(str);
                 if (resultCount > 0) {
+                    System.out.println("用户名已存在");
                     return ServiceResponse.createdByErrorMessage("用户名已存在");
                 }
             }
@@ -95,7 +97,8 @@ public class IUserServiceImpl implements IUserService {
         } else {
             return ServiceResponse.createdByErrorMessage("参数错误");
         }
-        return ServiceResponse.createdBySuccess("校验成功");
+        System.out.println("校验成功");
+        return ServiceResponse.createdBySuccessMessage("校验成功");
     }
 
     /**
@@ -106,7 +109,7 @@ public class IUserServiceImpl implements IUserService {
     @Override
     public ServiceResponse selectQuestion(String username) {
         ServiceResponse validResponse = this.checkVaild(username, Const.USERNAME);
-        if (validResponse.isSuccess()) {
+        if (!validResponse.isSuccess()) {
             return ServiceResponse.createdByErrorMessage("用户不存在");
         }
 
@@ -149,7 +152,7 @@ public class IUserServiceImpl implements IUserService {
         }
 
         ServiceResponse validResponse = this.checkVaild(username, Const.USERNAME);
-        if (validResponse.isSuccess()) {
+        if (!validResponse.isSuccess()) {
             return ServiceResponse.createdByErrorMessage("用户不存在");
         }
 
