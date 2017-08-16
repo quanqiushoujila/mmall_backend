@@ -68,7 +68,6 @@ public class IUserServiceImpl implements IUserService {
         if (resultCount == 0) {
             return ServiceResponse.createdByErrorMessage("注册失败");
         }
-        System.out.println("1112222");
         return ServiceResponse.createdBySuccessMessage("注册成功");
     }
 
