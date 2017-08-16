@@ -41,7 +41,7 @@ public class UserController {
      * @param session
      * @return
      */
-    @RequestMapping(value="logout.do", method= RequestMethod.GET)
+    @RequestMapping(value="logout.do", method= RequestMethod.POST)
     @ResponseBody
     public ServiceResponse<String> logout(HttpSession session) {
         session.removeAttribute(Const.CURRENT_USER);
@@ -79,7 +79,7 @@ public class UserController {
     @RequestMapping(value="get_user_info.do", method=RequestMethod.POST)
     @ResponseBody
     public ServiceResponse<User> getUserInfo(HttpSession session) {
-        User user = (User) session.getAttribute(Const.USERNAME);
+        User user = (User) session.getAttribute(Const.CURRENT_USER);
         if (user == null) {
             return ServiceResponse.createdByErrorMessage("用户未登录,无法获取用户信息");
         }
@@ -104,9 +104,9 @@ public class UserController {
      * @param answer
      * @return
      */
-    @RequestMapping(value="forget_check_question.do", method=RequestMethod.POST)
+    @RequestMapping(value="forget_check_answer.do", method=RequestMethod.POST)
     @ResponseBody
-    public ServiceResponse<String> forgetCheckQuestion(String username, String question, String answer) {
+    public ServiceResponse<String> forgetCheckAnswer(String username, String question, String answer) {
         return iUserService.checkAnswer(username, question, answer);
     }
 

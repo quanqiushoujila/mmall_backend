@@ -28,7 +28,6 @@ public class IUserServiceImpl implements IUserService {
     @Override
     public ServiceResponse<User> login(String username, String password) {
         int resultCount = userMapper.checkUsername(username);
-        System.out.println("resultCount:" + resultCount);
         if (resultCount == 0) {
             return ServiceResponse.createdByErrorMessage("用户名不存在");
         }
@@ -39,7 +38,6 @@ public class IUserServiceImpl implements IUserService {
             return ServiceResponse.createdByErrorMessage("密码错误");
         }
         user.setPassword(StringUtils.EMPTY);
-        System.out.println("user" + user);
         return ServiceResponse.createdBySuccess("登录成功", user);
     }
 
@@ -90,13 +88,13 @@ public class IUserServiceImpl implements IUserService {
             if (Const.EMAIL.equals(type)) {
                 int resultCount = userMapper.checkEmail(str);
                 if (resultCount > 0) {
+                    System.out.println("邮箱已存在");
                     return ServiceResponse.createdByErrorMessage("邮箱已存在");
                 }
             }
         } else {
             return ServiceResponse.createdByErrorMessage("参数错误");
         }
-        System.out.println("校验成功");
         return ServiceResponse.createdBySuccessMessage("校验成功");
     }
 
@@ -107,7 +105,7 @@ public class IUserServiceImpl implements IUserService {
      */
     @Override
     public ServiceResponse selectQuestion(String username) {
-        ServiceResponse validResponse = this.checkVaild(username, Const.USERNAME);
+        ServiceResponse validResponse = this.checkVaild(username, Const.CURRENT_USER);
         if (!validResponse.isSuccess()) {
             return ServiceResponse.createdByErrorMessage("用户不存在");
         }
@@ -132,6 +130,7 @@ public class IUserServiceImpl implements IUserService {
         if (resultCount > 0) {
             String forgetToken = UUID.randomUUID().toString();
             TokenCache.setKey(TokenCache.TOKEN_PREFIX + username, forgetToken);
+            System.out.println("token:" + TokenCache.getKey(TokenCache.TOKEN_PREFIX + username));
             return ServiceResponse.createdBySuccess(forgetToken);
         }
         return ServiceResponse.createdByErrorMessage("回答的问题是错误的");
@@ -146,17 +145,18 @@ public class IUserServiceImpl implements IUserService {
      */
     @Override
     public ServiceResponse<String> forgetRestPassword(String username, String passwordNew, String forgetToken) {
-        if (StringUtils.isNotBlank(forgetToken)) {
+        if (StringUtils.isBlank(forgetToken)) {
             return ServiceResponse.createdByErrorMessage("参数错误，需要传递token值");
         }
 
-        ServiceResponse validResponse = this.checkVaild(username, Const.USERNAME);
+        ServiceResponse validResponse = this.checkVaild(username, Const.CURRENT_USER);
         if (!validResponse.isSuccess()) {
             return ServiceResponse.createdByErrorMessage("用户不存在");
         }
 
         String token = TokenCache.getKey(TokenCache.TOKEN_PREFIX + username);
-        if (StringUtils.isNotBlank(token)) {
+        System.out.println("token:" + token);
+        if (StringUtils.isBlank(token)) {
             return ServiceResponse.createdByErrorMessage("token无效或者过期");
         }
 
