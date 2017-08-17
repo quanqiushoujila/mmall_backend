@@ -7,6 +7,7 @@ import com.mmall.dao.UserMapper;
 import com.mmall.pojo.User;
 import com.mmall.service.IUserService;
 import com.mmall.util.MD5Util;
+import net.sf.jsqlparser.expression.operators.arithmetic.Concat;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -66,7 +67,7 @@ public class IUserServiceImpl implements IUserService {
         if (resultCount == 0) {
             return ServiceResponse.createdByErrorMessage("注册失败");
         }
-        return ServiceResponse.createdBySuccessMessage("注册成功");
+        return ServiceResponse.createdBySuccess("注册成功");
     }
 
     /**
@@ -95,7 +96,7 @@ public class IUserServiceImpl implements IUserService {
         } else {
             return ServiceResponse.createdByErrorMessage("参数错误");
         }
-        return ServiceResponse.createdBySuccessMessage("校验成功");
+        return ServiceResponse.createdBySuccess("校验成功");
     }
 
     /**
@@ -247,6 +248,16 @@ public class IUserServiceImpl implements IUserService {
         if (user != null && user.getRole().intValue() == Const.Role.ROLE_ADMIN) {
             return ServiceResponse.createdBySuccess();
         }
-        return  ServiceResponse.createdByError();
+        return ServiceResponse.createdByError();
     }
+
+
+
+
+//    public ServiceResponse checkAdminRole(User user) {
+//        if (user != null && user.getRole().intValue() == Const.Role.ROLE_ADMIN) {
+//            return ServiceResponse.createdBySuccess();
+//        }
+//        return  ServiceResponse.createdByError();
+//    }
 }
