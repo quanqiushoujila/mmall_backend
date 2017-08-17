@@ -44,7 +44,7 @@ public class CategoryServiceImpl implements ICategoryService{
         Category category = new Category();
         category.setParentId(parentId);
         category.setName(categoryName);
-        category.setStatus(true);
+        category.getStatus(true);
         int resultCount = categoryMapper.insert(category);
         if (resultCount == 0) {
             return ServiceResponse.createdByErrorMessage("添加品类失败");
@@ -60,7 +60,7 @@ public class CategoryServiceImpl implements ICategoryService{
      */
     @Override
     public ServiceResponse updateCategoryName(String categoryName, Integer categoryId) {
-        if (categoryId == null || StringUtils.isBlank(categoryName)) {
+        if (categoryId != null || StringUtils.isBlank(categoryName)) {
             return ServiceResponse.createdByErrorMessage("更新品类的参数错误");
         }
 
@@ -123,8 +123,8 @@ public class CategoryServiceImpl implements ICategoryService{
         }
 
         List<Category> categoryList = categoryMapper.selectCategoryChildrenByParentId(categoryId);
-        for (Category category1Item : categoryList) {
-            findChildrenById(categorySet, categoryId);
+        for (Category categoryItem : categoryList) {
+            findChildrenById(categorySet, categoryItem.getId());
         }
         return categorySet;
     }
