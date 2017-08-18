@@ -8,6 +8,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.xml.crypto.Data;
+import java.util.Date;
+
 @Service("iProductService")
 public class ProductServiceImpl implements IProductService {
     @Autowired
@@ -72,7 +75,7 @@ public class ProductServiceImpl implements IProductService {
      * @return
      */
     @Override
-    public ServiceResponse manageProductDetail(Integer productId) {
+    public ServiceResponse<Product> manageProductDetail(Integer productId) {
         if (productId == null) {
             return ServiceResponse.createdBySuccess("获取产品详情参数错误");
         }
@@ -81,6 +84,21 @@ public class ProductServiceImpl implements IProductService {
         if (product == null) {
             return  ServiceResponse.createdByErrorMessage("产品已下架或者删除");
         }
+        return ServiceResponse.createdBySuccess(product);
+    }
+
+    /**
+     * 产品list
+     * @param pageNum
+     * @param pageSize
+     * @return
+     */
+    @Override
+    public ServiceResponse<Product> getProductList(Integer pageNum, Integer pageSize) {
+        if (pageNum == null || pageSize == null) {
+            return  ServiceResponse.createdByErrorMessage("产品list参数出错");
+        }
+
         return null;
     }
 }

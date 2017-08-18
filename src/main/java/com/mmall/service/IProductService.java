@@ -9,4 +9,6 @@ public interface IProductService {
     ServiceResponse setSaleStatus(Integer productId, Integer status);
 
     ServiceResponse manageProductDetail(Integer productId);
+
+    ServiceResponse<Product> getProductList(Integer pageNum,Integer pageSize);
 }
