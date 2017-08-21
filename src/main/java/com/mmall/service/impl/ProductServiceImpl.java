@@ -1,5 +1,7 @@
 package com.mmall.service.impl;
 
+import com.mmall.common.Const;
+import com.mmall.common.ResponseCode;
 import com.mmall.common.ServiceResponse;
 import com.mmall.dao.ProductMapper;
 import com.mmall.pojo.Product;
@@ -9,13 +11,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.xml.crypto.Data;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Service("iProductService")
 public class ProductServiceImpl implements IProductService {
     @Autowired
     private ProductMapper productMapper;
 
+    /*后台部分*/
     /**
      * 新增OR更新产品
      * @param product
@@ -99,6 +104,51 @@ public class ProductServiceImpl implements IProductService {
             return  ServiceResponse.createdByErrorMessage("产品list参数出错");
         }
 
+        return null;
+    }
+
+    /*前台部分*/
+
+    /**
+     * 获取商品详情
+     * @param productId
+     * @return
+     */
+    @Override
+    public ServiceResponse<Product> productDetail(Integer productId) {
+        if (productId == null) {
+            return ServiceResponse.createdByeErrorCodeMessage(ResponseCode.ILLEGAL_ARGUMENT.getCode(), ResponseCode.ILLEGAL_ARGUMENT.getDesc());
+        }
+        Product product = productMapper.selectByPrimaryKey(productId);
+        if (product == null) {
+            return ServiceResponse.createdByErrorMessage("产品已下架或者删除");
+        }
+        if (product.getStatus() != Const.ProductStatusEnum.ON_SALE.getCode()) {
+            return ServiceResponse.createdByErrorMessage("产品已下架或者删除");
+        }
+        return ServiceResponse.createdBySuccess(product);
+    }
+
+    /**
+     * 产品搜索及动态排序List
+     * @param productId
+     * @param keyword
+     * @param pageNum
+     * @param pageSize
+     * @param orderBy
+     * @return
+     */
+    @Override
+    public ServiceResponse<List<Product>> getProductByKeywordCategory(Integer productId, String keyword, Integer pageNum, Integer pageSize, String orderBy) {
+        if (productId == null && StringUtils.isBlank(keyword)) {
+            return ServiceResponse.createdByeErrorCodeMessage(ResponseCode.ILLEGAL_ARGUMENT.getCode(), ResponseCode.ILLEGAL_ARGUMENT.getDesc());
+        }
+
+        List<Product> productList = new ArrayList<>();
+
+        if (productId == null) {
+
+        }
         return null;
     }
 }
