@@ -62,4 +62,54 @@ public class CartController {
         }
         return iCartService.deleteProduct(user.getId(), productIds);
     }
+
+    @RequestMapping(value = "select.do")
+    @ResponseBody
+    public ServiceResponse<CartVo> select (Integer productId, HttpSession session) {
+        User user = (User) session.getAttribute(Const.CURRENT_USER);
+        if (user == null) {
+            return ServiceResponse.createdByeErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDesc());
+        }
+        return iCartService.selectOrUnSelect(user.getId(), productId, Const.Cart.CHECKED);
+    }
+
+    @RequestMapping(value = "un_select.do")
+    @ResponseBody
+    public ServiceResponse<CartVo> unSelect (Integer productId, HttpSession session) {
+        User user = (User) session.getAttribute(Const.CURRENT_USER);
+        if (user == null) {
+            return ServiceResponse.createdByeErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDesc());
+        }
+        return iCartService.selectOrUnSelect(user.getId(), productId, Const.Cart.UN_CHECKED);
+    }
+
+    @RequestMapping(value = "select_all.do")
+    @ResponseBody
+    public ServiceResponse<CartVo> selectAll (HttpSession session) {
+        User user = (User) session.getAttribute(Const.CURRENT_USER);
+        if (user == null) {
+            return ServiceResponse.createdByeErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDesc());
+        }
+        return iCartService.selectOrUnSelect(user.getId(), null, Const.Cart.CHECKED);
+    }
+
+    @RequestMapping(value = "un_select_all.do")
+    @ResponseBody
+    public ServiceResponse<CartVo> unSelectAll (HttpSession session) {
+        User user = (User) session.getAttribute(Const.CURRENT_USER);
+        if (user == null) {
+            return ServiceResponse.createdByeErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDesc());
+        }
+        return iCartService.selectOrUnSelect(user.getId(), null, Const.Cart.UN_CHECKED);
+    }
+
+    @RequestMapping(value = "get_cart_product_count.do")
+    @ResponseBody
+    public ServiceResponse<Integer> getCartProductCount (HttpSession session) {
+        User user = (User) session.getAttribute(Const.CURRENT_USER);
+        if (user == null) {
+            return ServiceResponse.createdBySuccess("0");
+        }
+        return iCartService.getCartProductCount(user.getId());
+    }
 }
