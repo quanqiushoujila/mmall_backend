@@ -23,6 +23,8 @@ public class CartController {
     @Autowired
     private ICartService iCartService;
 
+    @RequestMapping(value = "list.do")
+    @ResponseBody
     public ServiceResponse<CartVo> list(HttpSession session) {
         User user = (User) session.getAttribute(Const.CURRENT_USER);
         if (user == null) {
@@ -39,5 +41,25 @@ public class CartController {
             return ServiceResponse.createdByeErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDesc());
         }
         return iCartService.add(user.getId(), productId, count);
+    }
+
+    @RequestMapping(value = "update.do")
+    @ResponseBody
+    public ServiceResponse<CartVo> update (Integer productId, Integer count, HttpSession session) {
+        User user = (User) session.getAttribute(Const.CURRENT_USER);
+        if (user == null) {
+            return ServiceResponse.createdByeErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDesc());
+        }
+        return iCartService.update(user.getId(), productId, count);
+    }
+
+    @RequestMapping(value = "delete_product.do")
+    @ResponseBody
+    public ServiceResponse<CartVo> deleteProduct (String productIds, HttpSession session) {
+        User user = (User) session.getAttribute(Const.CURRENT_USER);
+        if (user == null) {
+            return ServiceResponse.createdByeErrorCodeMessage(ResponseCode.NEED_LOGIN.getCode(), ResponseCode.NEED_LOGIN.getDesc());
+        }
+        return iCartService.deleteProduct(user.getId(), productIds);
     }
 }
