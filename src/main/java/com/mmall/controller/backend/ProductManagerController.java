@@ -1,5 +1,6 @@
 package com.mmall.controller.backend;
 
+import com.github.pagehelper.PageInfo;
 import com.mmall.common.Const;
 import com.mmall.common.ServiceResponse;
 import com.mmall.dao.ProductMapper;
@@ -106,4 +107,30 @@ public class ProductManagerController {
         return ServiceResponse.createdByErrorMessage("无权限操作");
     }
 
+    /**
+     * 产品搜索
+     * @param session
+     * @param pageNum
+     * @param pageSize
+     * @param productName
+     * @param productId
+     * @return
+     */
+    @RequestMapping(value = "search.do")
+    @ResponseBody
+    public ServiceResponse<PageInfo> productSearch(String productName,
+                                                   Integer productId,
+                                                   @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
+                                                   @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize,
+                                                   HttpSession session) {
+        User user = (User) session.getAttribute(Const.CURRENT_USER);
+        if (user == null) {
+            return ServiceResponse.createdByeErrorCodeMessage(Const.Role.ROLE_ADMIN, "用户未登录,请登录管理员");
+        }
+        if (iUserService.checkAdminRole(user).isSuccess()) {
+            return iProductService.searchProduct(productId, productName, pageNum, pageSize);
+        }
+
+        return ServiceResponse.createdByErrorMessage("无权限操作");
+    }
 }
