@@ -1,11 +1,16 @@
 package com.mmall.service.impl;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
+import com.google.common.collect.Lists;
 import com.mmall.common.Const;
 import com.mmall.common.ResponseCode;
 import com.mmall.common.ServiceResponse;
 import com.mmall.dao.ProductMapper;
 import com.mmall.pojo.Product;
 import com.mmall.service.IProductService;
+import com.mmall.vo.ProductVo;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -34,7 +39,7 @@ public class ProductServiceImpl implements IProductService {
         if (StringUtils.isNotBlank(product.getSubImages())) {
             String[] subImagesArray = product.getSubImages().split(",");
             if (subImagesArray.length > 0) {
-                product.setSubImages(subImagesArray[0]);
+                product.setMainImage(subImagesArray[0]);
             }
         }
         if (product.getId() == null) {
@@ -99,13 +104,56 @@ public class ProductServiceImpl implements IProductService {
      * @return
      */
     @Override
-    public ServiceResponse<Product> getProductList(Integer pageNum, Integer pageSize) {
-        if (pageNum == null || pageSize == null) {
-            return  ServiceResponse.createdByErrorMessage("产品list参数出错");
-        }
+    public ServiceResponse<PageInfo> getProductList(Integer pageNum, Integer pageSize) {
+        List<Product> productList = productMapper.selectList();
 
-        return null;
+        PageHelper.startPage(pageNum, pageSize);
+        List<ProductVo> productVoList = Lists.newArrayList();
+        for(Product productItem : productList) {
+            productVoList.add(assembleProductListVo(productItem));
+        }
+        PageInfo pageInfo = new PageInfo(productList);
+        pageInfo.setList(productVoList);
+        return ServiceResponse.createdBySuccess(pageInfo);
     }
+
+    /**
+     * 产品搜索
+     * @param productId
+     * @param productName
+     * @param pageNum
+     * @param pageSize
+     * @return
+     */
+    @Override
+    public ServiceResponse<PageInfo> searchProduct(Integer productId, String productName, Integer pageNum, Integer pageSize) {
+        PageHelper.startPage(pageNum, pageSize);
+        if (StringUtils.isNotBlank(productName)) {
+            productName = new StringBuffer().append("%").append(productName).append("%").toString();
+        }
+        List<Product> productList = productMapper.selectByProductIdProductName(productId, productName);
+        List<ProductVo> productVoList = Lists.newArrayList();
+        for(Product productItem : productList) {
+            productVoList.add(assembleProductListVo(productItem));
+        }
+        PageInfo pageInfo = new PageInfo(productList);
+        pageInfo.setList(productVoList);
+        return ServiceResponse.createdBySuccess(pageInfo);
+    }
+
+    public ProductVo assembleProductListVo(Product product) {
+        ProductVo productVo = new ProductVo();
+        productVo.setId(product.getId());
+        productVo.setName(product.getName());
+        productVo.setCategoryId(product.getCategoryId());
+        productVo.setMainImage(product.getMainImage());
+        productVo.setPrice(product.getPrice());
+        productVo.setStatus(product.getStatus());
+        productVo.setSubtitle(product.getSubtitle());
+        return productVo;
+    }
+
+
 
     /*前台部分*/
 
@@ -131,7 +179,7 @@ public class ProductServiceImpl implements IProductService {
 
     /**
      * 产品搜索及动态排序List
-     * @param productId
+     * @param categoryId
      * @param keyword
      * @param pageNum
      * @param pageSize
@@ -139,16 +187,13 @@ public class ProductServiceImpl implements IProductService {
      * @return
      */
     @Override
-    public ServiceResponse<List<Product>> getProductByKeywordCategory(Integer productId, String keyword, Integer pageNum, Integer pageSize, String orderBy) {
-        if (productId == null && StringUtils.isBlank(keyword)) {
+    public ServiceResponse<List<Product>> getProductByKeywordCategory(Integer categoryId, String keyword, Integer pageNum, Integer pageSize, String orderBy) {
+        if (categoryId == null && StringUtils.isBlank(keyword)) {
             return ServiceResponse.createdByeErrorCodeMessage(ResponseCode.ILLEGAL_ARGUMENT.getCode(), ResponseCode.ILLEGAL_ARGUMENT.getDesc());
         }
+//        if ()
+        PageHelper.startPage(pageNum, pageSize);
 
-        List<Product> productList = new ArrayList<>();
-
-        if (productId == null) {
-
-        }
         return null;
     }
 }

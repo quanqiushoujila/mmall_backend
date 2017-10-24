@@ -24,15 +24,29 @@ public class ProductController {
     @Autowired
     private IUserService iUserService;
 
+    /**
+     * 产品详情
+     * @param productId
+     * @return
+     */
     @RequestMapping(value = "detail.do")
     @ResponseBody
     public ServiceResponse<Product> detail(Integer productId) {
         return iProductService.productDetail(productId);
     }
 
+    /**
+     * 产品搜索及动态排序List
+     * @param categoryId
+     * @param keyword
+     * @param pageNum
+     * @param pageSize
+     * @param orderBy
+     * @return
+     */
     @RequestMapping(value = "list.do")
     @ResponseBody
-    public ServiceResponse<List<Product>> list(@RequestParam(value = "productId", required = false) Integer productId,
+    public ServiceResponse<List<Product>> list(@RequestParam(value = "categoryId", required = false) Integer categoryId,
                                                @RequestParam(value = "keyword", required = false) String keyword,
                                                @RequestParam(value = "pageNum", defaultValue = "1") Integer pageNum,
                                                @RequestParam(value = "pageSize", defaultValue = "10") Integer pageSize,
