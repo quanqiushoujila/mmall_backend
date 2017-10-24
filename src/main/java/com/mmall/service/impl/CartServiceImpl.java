@@ -100,7 +100,7 @@ public class CartServiceImpl implements ICartService {
     @Override
     public ServiceResponse<Integer> getCartProductCount(Integer userId) {
         if (userId == null) {
-            return ServiceResponse.createdBySuccess("0");
+            return ServiceResponse.createBySuccessMessage("0");
         }
         return ServiceResponse.createdBySuccess(cartMapper.selectCartProductCount(userId));
     }

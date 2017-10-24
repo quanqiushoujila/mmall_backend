@@ -67,7 +67,7 @@ public class IUserServiceImpl implements IUserService {
         if (resultCount == 0) {
             return ServiceResponse.createdByErrorMessage("注册失败");
         }
-        return ServiceResponse.createdBySuccess("注册成功");
+        return ServiceResponse.createBySuccessMessage("注册成功");
     }
 
     /**
@@ -96,7 +96,7 @@ public class IUserServiceImpl implements IUserService {
         } else {
             return ServiceResponse.createdByErrorMessage("参数错误");
         }
-        return ServiceResponse.createdBySuccess("校验成功");
+        return ServiceResponse.createBySuccessMessage("校验成功");
     }
 
     /**
@@ -106,8 +106,8 @@ public class IUserServiceImpl implements IUserService {
      */
     @Override
     public ServiceResponse selectQuestion(String username) {
-        ServiceResponse validResponse = this.checkVaild(username, Const.CURRENT_USER);
-        if (!validResponse.isSuccess()) {
+        ServiceResponse validResponse = this.checkVaild(username, Const.USERNAME);
+        if (validResponse.isSuccess()) {
             return ServiceResponse.createdByErrorMessage("用户不存在");
         }
 
@@ -150,8 +150,8 @@ public class IUserServiceImpl implements IUserService {
             return ServiceResponse.createdByErrorMessage("参数错误，需要传递token值");
         }
 
-        ServiceResponse validResponse = this.checkVaild(username, Const.CURRENT_USER);
-        if (!validResponse.isSuccess()) {
+        ServiceResponse validResponse = this.checkVaild(username, Const.USERNAME);
+        if (validResponse.isSuccess()) {
             return ServiceResponse.createdByErrorMessage("用户不存在");
         }
 
@@ -165,7 +165,7 @@ public class IUserServiceImpl implements IUserService {
             String md5Password = MD5Util.MD5EncodeUtf8(passwordNew);
             int resultCount = userMapper.updatePasswordByUsername(username, md5Password);
             if (resultCount > 0) {
-                return ServiceResponse.createdBySuccess("修改密码成功");
+                return ServiceResponse.createBySuccessMessage("修改密码成功");
             }
         } else {
             return ServiceResponse.createdByErrorMessage("token失效，请重新获取token值");
@@ -190,7 +190,7 @@ public class IUserServiceImpl implements IUserService {
         user.setPassword(MD5Util.MD5EncodeUtf8(passwordNew));
         int updateCount = userMapper.updateByPrimaryKeySelective(user);
         if (updateCount > 0) {
-            return ServiceResponse.createdBySuccess("密码修改成功");
+            return ServiceResponse.createBySuccessMessage("密码修改成功");
         }
         return ServiceResponse.createdByErrorMessage("密码修改失败");
     }

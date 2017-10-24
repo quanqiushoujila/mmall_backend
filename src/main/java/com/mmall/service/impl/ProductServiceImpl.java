@@ -82,7 +82,7 @@ public class ProductServiceImpl implements IProductService {
     @Override
     public ServiceResponse<Product> manageProductDetail(Integer productId) {
         if (productId == null) {
-            return ServiceResponse.createdBySuccess("获取产品详情参数错误");
+            return ServiceResponse.createBySuccessMessage("获取产品详情参数错误");
         }
 
         Product product = productMapper.selectByPrimaryKey(productId);

@@ -108,7 +108,7 @@ public class CartController {
     public ServiceResponse<Integer> getCartProductCount (HttpSession session) {
         User user = (User) session.getAttribute(Const.CURRENT_USER);
         if (user == null) {
-            return ServiceResponse.createdBySuccess("0");
+            return ServiceResponse.createBySuccessMessage("0");
         }
         return iCartService.getCartProductCount(user.getId());
     }
